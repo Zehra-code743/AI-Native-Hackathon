@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'AI Native Book',
+  title: 'AI Robotics Book',
   tagline: 'Guides, experiments, and playbooks for intelligent robots.',
   favicon: 'img/favicon.ico',
 
@@ -75,9 +75,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'AI Native Book',
+      title: 'AI Robotics',
       logo: {
-        alt: 'AI Native Book logo',
+        alt: 'AI Robotics Logo',
         src: 'img/logo.svg',
       },
       items: [

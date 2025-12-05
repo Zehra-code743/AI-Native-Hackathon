@@ -1,83 +1,55 @@
-<!-- Sync Impact Report:
-Version change: None → 1.0.0
-Modified principles: None
-Added sections: Key Standards, Constraints, Project Modules, Success Criteria
-Removed sections: None
-Templates requiring updates:
-- .specify/templates/plan-template.md: ⚠ pending
-- .specify/templates/spec-template.md: ⚠ pending
-- .specify/templates/tasks-template.md: ⚠ pending
-- .specify/templates/commands/sp.constitution.md: ✅ updated
-Follow-up TODOs: None
--->
-# Physical AI & Humanoid Robotics Hackathon Constitution
+# [PROJECT_NAME] Constitution
+<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### I. Accuracy through Primary Source Verification
-All claims MUST be verified against peer-reviewed articles, official ROS 2, NVIDIA, and Unity documentation.
+### [PRINCIPLE_1_NAME]
+<!-- Example: I. Library-First -->
+[PRINCIPLE_1_DESCRIPTION]
+<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
-### II. Clarity for Academic Audience
-All content MUST be clear and accessible for an academic audience with a computer science and robotics background.
+### [PRINCIPLE_2_NAME]
+<!-- Example: II. CLI Interface -->
+[PRINCIPLE_2_DESCRIPTION]
+<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
-### III. Reproducibility
-All code, simulations, and claims MUST be cited and traceable, ensuring full reproducibility.
+### [PRINCIPLE_3_NAME]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[PRINCIPLE_3_DESCRIPTION]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### IV. Rigor
-The project MUST prefer peer-reviewed sources and verified AI-native methods.
+### [PRINCIPLE_4_NAME]
+<!-- Example: IV. Integration Testing -->
+[PRINCIPLE_4_DESCRIPTION]
+<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-## Key Standards
+### [PRINCIPLE_5_NAME]
+<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+[PRINCIPLE_5_DESCRIPTION]
+<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-- All factual claims MUST be traceable to sources.
-- Citation format MUST adhere to APA style.
-- Source types MUST include a minimum of 50% peer-reviewed articles.
-- Plagiarism check: 0% tolerance before submission.
-- Writing clarity: Flesch-Kincaid grade 10-12.
+### [PRINCIPLE_6_NAME]
 
-## Constraints
 
-- Word count: 5,000-7,000 words for the research-paper component.
-- Minimum 15 sources.
-- Format: PDF with embedded citations.
-- Chapters MUST support RAG embeddings, personalization, and Urdu translation.
+[PRINCIPLE__DESCRIPTION]
 
-## Project Modules
+## [SECTION_2_NAME]
+<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
-### Module 1: The Robotic Nervous System (ROS 2)
-- Focus: Middleware for robot control.
-- Topics: ROS 2 Nodes, Topics, Services.
-- Integration: Bridging Python Agents to ROS controllers using rclpy.
-- Robot Description: Understanding URDF (Unified Robot Description Format) for humanoids.
-- Outcome: Students can build ROS 2 packages and control simulated humanoids.
+[SECTION_2_CONTENT]
+<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
 
-### Module 2: The Digital Twin (Gazebo & Unity)
-- Focus: Physics simulation and environment building.
-- Topics: Simulating physics, gravity, collisions in Gazebo; High-fidelity rendering in Unity.
-- Sensors: LiDAR, Depth Cameras, IMUs.
-- Outcome: Students can create digital twins of humanoid robots and simulate sensor data.
+## [SECTION_3_NAME]
+<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
 
-### Module 3: The AI-Robot Brain (NVIDIA Isaac™)
-- Focus: Advanced perception and training.
-- Topics: NVIDIA Isaac Sim, Isaac ROS (hardware-accelerated VSLAM), Nav2 path planning.
-- Outcome: Students can implement perception, navigation, and reinforcement learning pipelines.
-
-### Module 4: Vision-Language-Action (VLA)
-- Focus: Convergence of LLMs and Robotics.
-- Topics: Voice-to-Action using OpenAI Whisper, cognitive planning to translate natural language into ROS 2 actions.
-- Capstone: Autonomous Humanoid executes voice command, plans path, navigates obstacles, identifies and manipulates objects.
-- Outcome: Students can integrate multi-modal AI with robotic control and human-robot interaction.
-
-## Success Criteria
-
-- All claims MUST be verified against sources.
-- Zero plagiarism detected.
-- Passes fact-checking review.
-- Fully reproducible code and simulation instructions.
-- Deployed Docusaurus book with RAG chatbot functionality.
-- Chapter personalization and Urdu translation buttons functional.
+[SECTION_3_CONTENT]
+<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
 
 ## Governance
+<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-Constitution supersedes all other practices; Amendments require documentation, approval, migration plan. All PRs/reviews MUST verify compliance. Complexity MUST be justified.
+[GOVERNANCE_RULES]
+<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-04 | **Last Amended**: 2025-12-04
+**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->

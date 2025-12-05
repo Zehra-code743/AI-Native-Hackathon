@@ -1,269 +1,149 @@
-# Tasks: Physical AI & Humanoid Robotics Hackathon Research and Textbook Project
+---
+description: "Task list for the AI & Humanoid Robotics Textbook feature."
+---
+
+# Tasks: AI & Humanoid Robotics Textbook
 
 **Input**: Design documents from `/specs/001-ai-robotics-textbook/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
-
-**Tests**: The feature specification does not explicitly request separate test tasks, but independent tests are defined per user story for validation.
-
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+- **[Story]**: Which user story this task belongs to (e.g., US1, US2)
+- Include exact file paths in descriptions.
 
 ## Path Conventions
 
-- **Multi-component project**: `backend/` for robotics/AI, `frontend/` for Docusaurus.
+- **backend**: `backend/src/`, `backend/tests/`
+- **frontend**: `Book/src/`, `Book/tests/`
 
 ---
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Project initialization and basic structure
+**Purpose**: Project initialization and basic structure for the backend.
 
-- [x] T001 Create project directories: `backend/src/ros_nodes`, `backend/src/ai_pipelines`, `backend/src/simulation`, `backend/tests/ros_tests`, `backend/tests/ai_tests`, `backend/tests/sim_tests`, `frontend/docs`, `frontend/src/components`, `frontend/src/pages`, `frontend/src/services`, `frontend/tests`
-- [ ] T002 Initialize Docusaurus project in `frontend/`
-- [ ] T003 Initialize ROS 2 workspace in `backend/`
-- [ ] T004 Configure Git for multi-component project (e.g., `.gitignore` for `node_modules`, build artifacts)
+- [ ] T001 Create backend directory structure in `backend/src/` (api, models, services, ai_pipelines, ros_nodes) and `backend/tests/`.
+- [ ] T002 Initialize Python project with a `requirements.txt` in `backend/`.
+- [ ] T003 Add `fastapi`, `uvicorn`, `pydantic`, `python-dotenv` to `backend/requirements.txt`.
+- [ ] T004 [P] Configure linting (e.g., `ruff`) and formatting (e.g., `black`) for the backend project in `backend/pyproject.toml`.
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
+**Purpose**: Core infrastructure that must be complete before user stories.
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete
+- [ ] T005 Create a basic FastAPI app instance in `backend/src/api/main.py`.
+- [ ] T006 Create a ROS 2 workspace in `backend/src/ros_ws/`.
+- [ ] T007 Create a placeholder humanoid description package in `backend/src/ros_ws/src/humanoid_description/`.
+- [ ] T008 [P] Create a `.env` file from `.env.example` in `backend/` for environment variables.
 
-- [ ] T005 Configure Docusaurus basic navigation and theme in `frontend/docusaurus.config.js`
-- [ ] T006 Set up basic ROS 2 environment and build system (colcon) in `backend/`
-- [ ] T007 Prepare initial Gazebo/Unity simulation environment (e.g., base world file) in `backend/src/simulation/`
-- [ ] T008 Configure basic logging infrastructure for backend components in `backend/src/utils/logger.py`
-
-**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+**Checkpoint**: Foundation ready - user story implementation can now begin.
 
 ---
 
-## Phase 3: User Story 1 - Build ROS 2 Packages and Control Humanoids (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Build ROS 2 Packages (Priority: P1) 🎯 MVP
 
-**Goal**: As a student, I want to be able to build ROS 2 packages and control simulated humanoids, so that I can understand the middleware for robot control.
-
-**Independent Test**: Successfully compile a ROS 2 package and run a simple command to move a simulated humanoid.
+**Goal**: Enable students to build ROS 2 packages and control a simulated humanoid.
+**Independent Test**: Successfully compile a ROS 2 package and publish a command that a placeholder node receives.
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Create `humanoid_controller` ROS 2 package in `backend/src/ros_nodes/humanoid_controller`
-- [ ] T010 [P] [US1] Define `Humanoid Robot` URDF model in `backend/src/ros_nodes/humanoid_controller/urdf/humanoid.urdf`
-- [ ] T011 [US1] Implement ROS 2 Python node for basic humanoid control (`cmd_vel` subscriber) in `backend/src/ros_nodes/humanoid_controller/src/control_node.py`
-- [ ] T012 [US1] Implement Python agent to bridge to ROS controllers (`rclpy`) in `backend/src/ros_nodes/humanoid_controller/src/python_agent_bridge.py`
-- [ ] T013 [US1] Create a simple launch file to start ROS 2 control nodes and simulation in `backend/src/ros_nodes/humanoid_controller/launch/control.launch.py`
+- [ ] T009 [US1] Define a basic humanoid structure in a URDF file in `backend/src/ros_ws/src/humanoid_description/urdf/humanoid.urdf`.
+- [ ] T010 [US1] Create a new ROS 2 package for humanoid control in `backend/src/ros_ws/src/humanoid_control/`.
+- [ ] T011 [US1] Create a simple "teleop" publisher node in `backend/src/ros_ws/src/humanoid_control/humanoid_control/nodes/teleop_node.py`.
+- [ ] T012 [US1] Create a simple "subscriber" log node in `backend/src/ros_ws/src/humanoid_control/humanoid_control/nodes/subscriber_node.py`.
+- [ ] T013 [US1] Create a launch file to start the nodes in `backend/src/ros_ws/src/humanoid_control/launch/control.launch.py`.
 
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
+**Checkpoint**: User Story 1 is functional. A ROS 2 package can be built and nodes can communicate.
 
 ---
 
-## Phase 4: User Story 2 - Create Humanoid Digital Twins and Simulate Sensor Data (Priority: P1)
+## Phase 4: User Story 2 - Create Humanoid Digital Twin (Priority: P1)
 
-**Goal**: As a student, I want to be able to create digital twins of humanoid robots and simulate sensor data using Gazebo and Unity, so that I can understand physics simulation and environment building.
-
-**Independent Test**: Create a simple digital twin in Gazebo/Unity and observe simulated LiDAR, Depth Camera, and IMU data.
+**Goal**: Create a digital twin in a simulator with working sensors.
+**Independent Test**: Launch the simulation and visualize the humanoid and its sensor data streams in RViz.
 
 ### Implementation for User Story 2
 
-- [ ] T014 [P] [US2] Integrate `Digital Twin` model (from `humanoid.urdf`) into Gazebo environment in `backend/src/simulation/gazebo/worlds/humanoid_world.sdf`
-- [ ] T015 [P] [US2] Add virtual sensors (LiDAR, Depth Camera, IMU) to the `Digital Twin` model in `backend/src/simulation/gazebo/models/humanoid/model.sdf`
-- [ ] T016 [US2] Implement ROS 2 sensor data publishers for simulated data in `backend/src/simulation/gazebo/plugins/sensor_publisher.cpp`
-- [ ] T017 [P] [US2] Set up Unity project for high-fidelity rendering and digital twin integration in `backend/src/simulation/unity/HumanoidSimulator`
-- [ ] T018 [US2] Develop Unity script to subscribe to ROS 2 topics for robot control and publish simulated sensor data in `backend/src/simulation/unity/HumanoidSimulator/Assets/Scripts/RosConnector.cs`
+- [ ] T014 [US2] Create a Gazebo world file in `backend/src/ros_ws/src/humanoid_control/worlds/simple.world`.
+- [ ] T015 [US2] Enhance the URDF from T009 to include Gazebo plugins for physics and control in `backend/src/ros_ws/src/humanoid_description/urdf/humanoid.urdf`.
+- [ ] T016 [P] [US2] Add sensor plugins (IMU, LiDAR, Depth Camera) to the `humanoid.urdf`.
+- [ ] T017 [US2] Create a launch file to start Gazebo with the humanoid in `backend/src/ros_ws/src/humanoid_control/launch/simulation.launch.py`.
+- [ ] T018 [P] [US2] Create an RViz2 configuration file to visualize the robot and sensor data in `backend/src/ros_ws/src/humanoid_control/rviz/simulation.rviz`.
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
+**Checkpoint**: User Story 2 is functional. The humanoid can be simulated and its sensors visualized.
 
 ---
 
-## Phase 5: User Story 3 - Implement AI Perception, Navigation, and Training Pipelines (Priority: P2)
+## Phase 5: User Story 3 - AI Perception & Navigation (Priority: P2)
 
-**Goal**: As a student, I want to be able to implement perception, navigation, and reinforcement learning pipelines using NVIDIA Isaac Sim and Isaac ROS, so that I can develop advanced AI capabilities for humanoid robots.
-
-**Independent Test**: Implement a basic VSLAM pipeline with Isaac ROS and demonstrate path planning using Nav2 in a simulated environment.
+**Goal**: Implement basic localization and navigation pipelines.
+**Independent Test**: Launch the simulation, run the VSLAM pipeline, and command a navigation goal via Nav2, which the robot successfully reaches.
 
 ### Implementation for User Story 3
 
-- [ ] T019 [P] [US3] Configure NVIDIA Isaac Sim project for `Digital Twin` integration in `backend/src/ai_pipelines/isaac_sim/humanoid_isaac_sim.py`
-- [ ] T020 [P] [US3] Implement basic VSLAM pipeline using Isaac ROS in `backend/src/ai_pipelines/isaac_ros/vslam_pipeline.py`
-- [ ] T021 [US3] Integrate Nav2 path planning with the simulated `Humanoid Robot` in `backend/src/ai_pipelines/nav2/humanoid_navigation.py`
-- [ ] T022 [US3] Develop a simple reinforcement learning environment for humanoid navigation in `backend/src/ai_pipelines/reinforcement_learning/humanoid_env.py`
+- [ ] T019 [US3] Install NVIDIA Isaac ROS dependencies for VSLAM.
+- [ ] T020 [US3] Create a launch file to run the Isaac ROS VSLAM node with the simulated sensor data in `backend/src/ros_ws/src/humanoid_control/launch/vslam.launch.py`.
+- [ ] T021 [US3] Configure the Nav2 stack for the humanoid robot in a new package `backend/src/ros_ws/src/humanoid_navigation/`.
+- [ ] T022 [US3] Create a launch file to bring up the full Nav2 stack in `backend/src/ros_ws/src/humanoid_navigation/launch/nav2.launch.py`.
 
-**Checkpoint**: All user stories should now be independently functional
-
----
-
-## Phase 6: User Story 4 - Integrate Vision-Language-Action for Humanoid Interaction (Priority: P2)
-
-**Goal**: As a student, I want to be able to integrate multi-modal AI with robotic control and human-robot interaction using Vision-Language-Action (VLA) models, so that the humanoid robot can execute voice commands and perform complex tasks.
-
-**Independent Test**: Issue a voice command and observe the simulated humanoid execute a corresponding action, plan a path, navigate obstacles, and identify/manipulate objects.
-
-### Implementation for User Story 4
-
-- [ ] T023 [P] [US4] Integrate OpenAI Whisper for voice-to-text translation in `backend/src/ai_pipelines/vla/whisper_integration.py`
-- [ ] T024 [US4] Implement a cognitive planning module to translate natural language commands into ROS 2 actions in `backend/src/ai_pipelines/vla/cognitive_planner.py`
-- [ ] T025 [US4] Develop a VLA integration node to orchestrate voice commands, perception, planning, and control in `backend/src/ai_pipelines/vla/vla_orchestrator_node.py`
+**Checkpoint**: User Story 3 is functional. The robot can localize and navigate in the simulated environment.
 
 ---
 
-## Phase 7: Textbook & Section Planning
+## Phase 6: User Story 4/5 - RAG Chatbot & VLA Integration (Priority: P2)
 
-**Purpose**: Structure Docusaurus chapters and plan AI-native features.
+**Goal**: The humanoid can receive voice commands, and users can ask questions via a chatbot.
+**Independent Test**: Issue a voice command like "go to the kitchen" and see the robot plan a path. Ask the chatbot a question and receive an answer.
 
-- [ ] T026 [P] Outline Docusaurus chapters for Modules 1-4 in `frontend/docs/modules/`
-- [ ] T027 [P] Plan personalization feature integration points in `frontend/src/components/PersonalizationComponent.js`
-- [ ] T028 [P] Plan Urdu translation feature integration points in `frontend/src/components/TranslationComponent.js`
-- [ ] T029 [P] Define RAG chatbot embedding points in `frontend/docs/rag_embeddings.md`
+### Implementation for User Story 4/5
 
----
+- [ ] T023 [P] [US4] Create `ChatInteraction` and `ChatMessage` Pydantic models in `backend/src/models/chat.py`.
+- [ ] T024 [US4] Implement a vector database service to store and query textbook content in `backend/src/services/rag_service.py`.
+- [ ] T025 [US4] Implement the `/api/v1/chat` endpoint logic in `backend/src/api/endpoints/chat.py`, using the `rag_service`.
+- [ ] T026 [P] [US5] Create a React component for the chatbot UI in `Book/src/components/Chatbot/index.tsx`.
+- [ ] T027 [US5] Implement the frontend logic to call the `/api/v1/chat` API and display results in the `Chatbot` component.
+- [ ] T028 [P] [US4] Create a ROS 2 node that uses a library like `speech_recognition` to process audio in `backend/src/ai_pipelines/nodes/voice_recognition_node.py`.
+- [ ] T029 [US4] Implement a service to translate recognized text to navigation goals in `backend/src/services/planning_service.py`.
 
-## Phase 8: Research Writing & Analysis
-
-**Purpose**: Draft the research paper with module-specific content.
-
-- [ ] T030 Write module content for Research Paper (Module 1) in `research_paper_draft/module1.md`
-- [ ] T031 Write module content for Research Paper (Module 2) in `research_paper_draft/module2.md`
-- [ ] T032 Write module content for Research Paper (Module 3) in `research_paper_draft/module3.md`
-- [ ] T033 Write module content for Research Paper (Module 4) in `research_paper_draft/module4.md`
-- [ ] T034 Integrate simulation and code examples into the research paper drafts (across `research_paper_draft/moduleX.md`)
+**Checkpoint**: User Stories 4 and 5 are functional. The robot accepts voice commands and the chatbot is interactive.
 
 ---
 
-## Phase 9: Textbook Implementation
+## Phase 7: Polish & Cross-Cutting Concerns
 
-**Purpose**: Build the Docusaurus-based AI-native textbook.
+**Purpose**: Improvements that affect multiple user stories and final deliverables.
 
-- [ ] T035 Implement Docusaurus markdown for Module 1 in `frontend/docs/modules/module1.md`
-- [ ] T036 Implement Docusaurus markdown for Module 2 in `frontend/docs/modules/module2.md`
-- [ ] T037 Implement Docusaurus markdown for Module 3 in `frontend/docs/modules/module3.md`
-- [ ] T038 Implement Docusaurus markdown for Module 4 in `frontend/docs/modules/module4.md`
-- [ ] T039 Implement RAG chatbot component in `frontend/src/components/RAGChatbot.js`
-- [ ] T040 Integrate personalization functionality into Docusaurus in `frontend/src/components/PersonalizationComponent.js`
-- [ ] T041 Integrate Urdu translation functionality into Docusaurus in `frontend/src/components/TranslationComponent.js`
-- [ ] T042 Fix Docusaurus layout and navigation issues in `frontend/docusaurus.config.js`
-- [ ] T043 Set up deployment to GitHub Pages/Vercel for `frontend/`
-
----
-
-## Phase 10: Testing & Validation
-
-**Purpose**: Validate functionality and ensure quality.
-
-- [ ] T044 Validate ROS 2 and Gazebo/Unity simulations in `backend/tests/sim_tests/test_simulations.py`
-- [ ] T045 Validate NVIDIA Isaac and VLA pipelines in `backend/tests/ai_tests/test_ai_pipelines.py`
-- [ ] T046 Validate RAG chatbot, personalization, and translation features in `frontend/tests/chatbot_features.test.js`
-- [ ] T047 Cross-check claims with sources and perform plagiarism check for the research paper.
-
----
-
-## Phase 11: Submission & Presentation
-
-**Purpose**: Prepare final deliverables.
-
-- [ ] T048 Record 90-second demo video of the humanoid robotics project.
-- [ ] T049 Compile GitHub repository and deployed textbook URL.
-- [ ] T050 Finalize research paper PDF.
-- [ ] T051 Prepare presentation notes.
+- [ ] T030 [P] Add content personalization hooks to the Docusaurus site in `Book/src/theme/Root.js`.
+- [ ] T031 [P] Implement i18n for Urdu translation and add a language switcher component in `Book/src/components/LanguageSwitcher/`.
+- [ ] T032 Write the main content for Modules 1-4 in the `Book/docs/` directory.
+- [ ] T033 [P] Write the 5,000-7,000 word research paper and save it as `research/paper.md`.
+- [ ] T034 [P] Generate final PDF outputs for all deliverables.
 
 ---
 
 ## Dependencies & Execution Order
 
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phases 3-6)**: All depend on Foundational phase completion
-  - User stories can then proceed in parallel (if staffed)
-  - Or sequentially in priority order (P1 → P2)
-- **Textbook & Section Planning (Phase 7)**: Can run in parallel with early user stories, depends on content decisions.
-- **Research Writing & Analysis (Phase 8)**: Depends on Phase 7 and ongoing research.
-- **Textbook Implementation (Phase 9)**: Depends on Phase 7 and Phase 8 (content).
-- **Testing & Validation (Phase 10)**: Depends on relevant implementation phases (Phases 3-6, 9)
-- **Submission (Phase 11)**: Depends on all other phases being complete.
-
-### User Story Dependencies
-
-- **User Story 1 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 2 (P1)**: Can start after Foundational (Phase 2) - No dependencies on other stories
-- **User Story 3 (P2)**: Can start after Foundational (Phase 2) - May integrate with US1/US2 but should be independently testable
-- **User Story 4 (P2)**: Can start after Foundational (Phase 2) - May integrate with US1/US2/US3 but should be independently testable
-
-### Within Each User Story
-
-- Models before services
-- Services before endpoints
-- Core implementation before integration
-- Story complete before moving to next priority
-
-### Parallel Opportunities
-
-- All Setup tasks marked [P] can run in parallel
-- All Foundational tasks marked [P] can run in parallel (within Phase 2)
-- Once Foundational phase completes, User Stories 1 & 2 can start in parallel (if team capacity allows), and later User Stories 3 & 4.
-- Tasks within a story marked [P] (e.g., creating multiple files) can run in parallel.
-- Different user stories can be worked on in parallel by different team members.
-- Textbook & Section Planning (Phase 7) can run in parallel with early user stories.
-- Research Writing & Analysis (Phase 8) can also be done concurrently with earlier implementation phases once content outlines are ready.
-
----
-
-## Parallel Example: User Story 1
-
-```bash
-# Launch all parallel tasks for User Story 1 together:
-Task: "Create `humanoid_controller` ROS 2 package in `backend/src/ros_nodes/humanoid_controller`"
-Task: "Define `Humanoid Robot` URDF model in `backend/src/ros_nodes/humanoid_controller/urdf/humanoid.urdf`"
-```
+- **Setup (Phase 1)** must complete before all other phases.
+- **Foundational (Phase 2)** must complete before all user story phases.
+- **User Story Phases (3-6)** can begin after the Foundational phase.
+  - US1 and US2 are P1 and should be prioritized.
+  - US2 depends on the URDF from US1.
+  - US3 depends on the simulated robot from US2.
+  - US4/5 (Chatbot/VLA) can be developed in parallel with US1-3 but depends on the Foundational backend API setup.
+- **Polish (Phase 7)** can be done last.
 
 ---
 
 ## Implementation Strategy
 
-### MVP First (User Story 1 Only)
+### MVP First (User Stories 1 & 2)
 
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Test User Story 1 independently
-5. Deploy/demo if ready
-
-### Incremental Delivery
-
-1. Complete Setup + Foundational → Foundation ready
-2. Add User Story 1 → Test independently → Deploy/Demo (MVP!)
-3. Add User Story 2 → Test independently → Deploy/Demo
-4. Add User Story 3 → Test independently → Deploy/Demo
-5. Add User Story 4 → Test independently → Deploy/Demo
-6. Each story adds value without breaking previous stories
-
-### Parallel Team Strategy
-
-With multiple developers:
-
-1. Team completes Setup + Foundational together
-2. Once Foundational is done:
-   - Developer A: User Story 1
-   - Developer B: User Story 2
-   - Developer C: User Story 3
-   - Developer D: User Story 4
-   - Developer E: Textbook Planning/Implementation (Phases 7, 9)
-   - Developer F: Research Writing (Phase 8)
-3. Stories complete and integrate independently.
-
----
-
-## Notes
-
-- [P] tasks = different files, no dependencies
-- [Story] label maps task to specific user story for traceability
-- Each user story should be independently completable and testable
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+1.  Complete Phase 1: Setup
+2.  Complete Phase 2: Foundational
+3.  Complete Phase 3: User Story 1 (ROS 2 Packages)
+4.  Complete Phase 4: User Story 2 (Digital Twin)
+5.  **STOP and VALIDATE**: A simulated humanoid exists, can be controlled, and has working sensors. This is a solid MVP.

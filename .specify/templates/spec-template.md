@@ -1,13 +1,9 @@
 # Feature Specification: [FEATURE NAME]
 
-**Constitution Compliance**: This specification adheres to the project constitution outlined in `.specify/memory/constitution.md`.
-
 **Feature Branch**: `[###-feature-name]`  
 **Created**: [DATE]  
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
-
-**Note**: All functional requirements, entities, and success criteria in this specification MUST directly align with the Project Constitution (specifically Modules and Success Criteria) and the detailed feature description.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -71,9 +67,6 @@
 
 ### Edge Cases
 
-- How does the system handle potential security vulnerabilities (e.g., input validation for RAG queries, secure communication for robotics control)?
-- What are the implications of real-time performance requirements on the system design (e.g., ROS 2 QoS, Isaac Sim performance)?
-
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right edge cases.
@@ -91,10 +84,6 @@
 
 ### Functional Requirements
 
-- All functional requirements MUST be traceable to either user stories or the project constitution's modules and constraints.
-- Focus on WHAT the system does, not HOW (avoid implementation details).
-
-
 - **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
 - **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
@@ -108,9 +97,6 @@
 
 ### Key Entities *(include if feature involves data)*
 
-- Entities MUST be defined abstractly, without specific database or programming language constructs.
-- Attributes should focus on conceptual data points, not implementation types.
-
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
@@ -122,10 +108,6 @@
 -->
 
 ### Measurable Outcomes
-
-- All outcomes MUST be directly verifiable against the project constitution's success criteria and key standards (e.g., plagiarism, source count, Flesch-Kincaid grade).
-- They should be technology-agnostic and provide clear metrics for project success.
-
 
 - **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]

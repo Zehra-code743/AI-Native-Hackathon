@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: AI Robotics Textbook API
+  version: 1.0.0
+  description: |
+    API for the AI-Native Textbook.
+    Includes endpoints for the RAG chatbot and other interactive features.
+
+paths:
+  /api/v1/chat:
+    post:
+      summary: Send a message to the RAG chatbot
+      operationId: postChatMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                  description: A unique identifier for the conversation session.
+                  example: "session_12345"
+                message:
+                  type: string
+                  description: The user's query.
+                  example: "How do ROS 2 nodes work?"
+              required:
+                - session_id
+                - message
+      responses:
+        '200':
+          description: Successful response from the chatbot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: The chatbot's answer.
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The ID of the source chapter.
+                        title:
+                          type: string
+                          description: The title of the source chapter.
+                      required:
+                        - id
+                        - title
+        '400':
+          description: Bad Request (e.g., missing parameters).
+        '500':
+          description: Internal Server Error.

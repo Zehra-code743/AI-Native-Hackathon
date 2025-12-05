@@ -17,21 +17,21 @@
   the iteration process.
 -->
 
-**Language/Version**: Python 3.11+, C++ (ROS 2), JavaScript (Docusaurus)  
-**Primary Dependencies**: ROS 2, NVIDIA Isaac Sim, OpenAI Whisper, Gazebo, Unity, Docusaurus  
-**Storage**: N/A (knowledge base for RAG implies future storage, but not directly in plan template)  
-**Testing**: ROS 2 tests, simulation validation, Docusaurus build/functional tests  
-**Target Platform**: Linux (ROS 2, Gazebo, Isaac), Windows/macOS (Unity dev), Web (Docusaurus)
-**Project Type**: Multi-component (robotics, simulation, web documentation)  
-**Performance Goals**: Reproducibility, real-time simulation control, efficient RAG embeddings  
-**Constraints**: 5,000-7,000 words, 15+ sources, PDF output, RAG/personalization/Urdu translation support  
-**Scale/Scope**: Academic hackathon project, 4 core modules
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [single/web/mobile - determines source structure]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Constitution compliance for Accuracy, Clarity, Reproducibility, Rigor, Standards, Constraints, and Module outcomes.
+[Gates determined based on constitution file]
 
 ## Project Structure
 
