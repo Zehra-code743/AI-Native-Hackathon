@@ -1,37 +1,112 @@
 # Dependencies
-node_modules/
+/node_modules
 
-# Build outputs
-build/
-dist/
-.docusaurus/
-.cache/
+# Production
+/build
 
-# Testing and coverage
-coverage/
-.nyc_output/
+# Generated files
+.docusaurus
+.cache-loader
 
-# Environment and local configuration
-.env
-.env.*
-.vercel/
-.turbo/
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Logs
 npm-debug.log*
 yarn-debug.log*
-pnpm-debug.log*
-*.log
+yarn-error.log*
 
-# Python artifacts
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 .venv/
+venv/
+dist/
+*.egg-info/
 
-# Editor settings
-.vscode/
+# C++
+build/
+bin/
+obj/
+out/
+*.o
+*.so
+*.a
+*.exe
+*.dll
 .idea/
+*.log
+.env*
 
-# OS files
-.DS_Store
+# Unity
+Library/
+Temp/
+Obj/
+Logs/
+Build/
+build/
+*.unityproj
+*.pidb
+*.suo
+*.user
+*.userprefs
+*.meta.orig
+*.sln.GhostDoc.xml
+*.opensdf
+*.sdf
+*.vsprefs
+*.csproj
+*.usercode
+*.lock.json
+*.asset.meta
+*.unity.meta
+*.prefab.meta
+*.controller.meta
+*.anim.meta
+*.mask.meta
+*.ttf.meta
+*.otf.meta
+*.fnt.meta
+*.mat.meta
+*.cubemap.meta
+*.renderTexture.meta
+*.physicmaterial.meta
+*.terrainlayer.meta
+*.flare.meta
+*.compute.meta
+*.shader.meta
+*.assetbundle.meta
+*.giparams.meta
+*.lighting.meta
+*.lightmap-snapshot.meta
+*.navmesh.meta
+*.overridecontroller.meta
+*.playable.meta
+*.preset.meta
+*.rendertexture.meta
+*.spriteatlas.meta
+*.unitypackage
+*.vcproj
+*.vcxproj
+*.bak
+*.resharper
+*.compilestate
+*.csproj.user
+*.dotsettings
+*.pidb
+*.rdc
+*.dll.mdb
+*.pdb
+*.mdb
+*.vsps
+*.dbmdl
+*.assetd
 
+# Docusaurus (additional specific)
+docusaurus-plugin-content-docs/
+docusaurus-plugin-content-blog/
+docusaurus-plugin-content-pages/
+docusaurus-plugin-content-sitemap/

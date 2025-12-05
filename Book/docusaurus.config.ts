@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'AI Robotics Book',
+  tagline: 'Guides, experiments, and playbooks for intelligent robots.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -22,8 +22,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'HackathonAiRebortics', // Usually your GitHub org/user name.
+  projectName: 'Book', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -75,21 +75,24 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'My Site',
+      title: 'AI Robotics',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'AI Robotics Logo',
         src: 'img/logo.svg',
       },
       items: [
+        {to: '/', label: 'Home', position: 'left'},
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
+        {href: '/#tracks', label: 'Learning Tracks', position: 'left'},
+        {href: '/#why', label: 'Why this guide', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/HackathonAiRebortics/Book',
           label: 'GitHub',
           position: 'right',
         },
@@ -99,46 +102,29 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Navigate',
           items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
+            {label: 'Home', to: '/'},
+            {label: 'Docs', to: '/docs/intro'},
+            {label: 'Blog', to: '/blog'},
           ],
         },
         {
-          title: 'Community',
+          title: 'Get involved',
           items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
+            {label: 'Contribute on GitHub', href: 'https://github.com/HackathonAiRebortics/Book'},
+            {label: 'Suggest improvements', href: 'mailto:team@hackathonairobotics.com'},
           ],
         },
         {
-          title: 'More',
+          title: 'Stay in the loop',
           items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
-            },
+            {label: 'Learning Tracks', href: '/#tracks'},
+            {label: 'Why this guide', href: '/#why'},
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Hackathon AI Robotics. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
