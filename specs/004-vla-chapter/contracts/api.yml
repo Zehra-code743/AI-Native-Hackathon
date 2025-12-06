@@ -1,0 +1,689 @@
+openapi: 3.0.0
+info:
+  title: VLA Chapter 4 API
+  version: 1.0.0
+  description: |
+    FastAPI endpoints for Chapter 4: Vision-Language-Action (VLA) Systems.
+    Includes Whisper transcription, cognitive planning, perception queries, action execution,
+    RAG chatbot, personalization, and Urdu translation.
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /api/v1/whisper/transcribe:
+    post:
+      summary: Convert audio to text using OpenAI Whisper
+      operationId: transcribeAudio
+      tags:
+        - Whisper
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                audio_file:
+                  type: string
+                  format: binary
+                  description: Audio file (WAV, MP3, or FLAC)
+                language:
+                  type: string
+                  description: Optional language code (ISO 639-1). Auto-detect if not provided.
+                  example: "en"
+      responses:
+        '200':
+          description: Successful transcription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscriptionResponse'
+        '400':
+          description: Invalid audio format or missing file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Whisper API error or internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service unavailable (API rate limit or service down)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/plan/generate:
+    post:
+      summary: Generate ROS 2 action graph from natural language command
+      operationId: generateActionPlan
+      tags:
+        - Cognitive Planning
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanningRequest'
+      responses:
+        '200':
+          description: Successful plan generation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanningResponse'
+        '400':
+          description: Invalid command format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Ambiguous or impossible command
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Planning error or LLM API failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/perception/query:
+    post:
+      summary: Query perception system for object coordinates
+      operationId: queryPerception
+      tags:
+        - Perception
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerceptionRequest'
+      responses:
+        '200':
+          description: Object found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerceptionResponse'
+        '404':
+          description: Object not found in current perception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: Timeout waiting for perception data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Perception system error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/execute/action:
+    post:
+      summary: Execute a ROS 2 action graph with safety validation
+      operationId: executeAction
+      tags:
+        - Action Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+      responses:
+        '200':
+          description: Execution started or completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResponse'
+        '400':
+          description: Invalid action graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Safety violation detected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Execution error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '504':
+          description: Execution timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/vla/process:
+    post:
+      summary: Complete VLA pipeline: voice/text → plan → execute
+      operationId: processVLACommand
+      tags:
+        - VLA Pipeline
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VLARequest'
+      responses:
+        '200':
+          description: Pipeline processing completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VLAResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Pipeline error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/chat/query:
+    post:
+      summary: Query RAG chatbot with question about chapter content
+      operationId: queryChatbot
+      tags:
+        - RAG Chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful chatbot response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: RAG processing error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/personalize/content:
+    post:
+      summary: Get personalized content variations for chapter
+      operationId: personalizeContent
+      tags:
+        - Personalization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalizationRequest'
+      responses:
+        '200':
+          description: Personalized content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalizationResponse'
+        '400':
+          description: Invalid profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Chapter not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Personalization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/translate/urdu:
+    post:
+      summary: Translate English text to Urdu with quality validation
+      operationId: translateToUrdu
+      tags:
+        - Translation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslationRequest'
+      responses:
+        '200':
+          description: Successful translation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationResponse'
+        '400':
+          description: Invalid text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Translation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    TranscriptionResponse:
+      type: object
+      properties:
+        transcribed_text:
+          type: string
+          example: "move forward 1 meter"
+        confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+          example: 0.95
+        language:
+          type: string
+          example: "en"
+        duration_seconds:
+          type: number
+          format: float
+          example: 2.3
+
+    PlanningRequest:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          description: Natural language command
+          example: "pick up the red cup and place it on the table"
+        robot_context:
+          type: object
+          properties:
+            current_pose:
+              type: object
+              properties:
+                x:
+                  type: number
+                y:
+                  type: number
+                z:
+                  type: number
+            available_actions:
+              type: array
+              items:
+                type: string
+              example: ["navigate", "grasp", "place"]
+
+    PlanningResponse:
+      type: object
+      properties:
+        action_graph:
+          $ref: '#/components/schemas/ActionGraph'
+        confidence:
+          type: number
+          format: float
+          example: 0.88
+        estimated_duration_seconds:
+          type: number
+          format: float
+          example: 15.0
+
+    ActionGraph:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionEdge'
+
+    ActionNode:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "locate_cup"
+        type:
+          type: string
+          enum: [NAVIGATE, GRASP, PLACE, PERCEPTION_QUERY, WAIT, CUSTOM]
+          example: "PERCEPTION_QUERY"
+        parameters:
+          type: object
+          additionalProperties: true
+          example:
+            object_name: "red cup"
+        dependencies:
+          type: array
+          items:
+            type: string
+          example: []
+        outputs:
+          type: object
+          additionalProperties: true
+
+    ActionEdge:
+      type: object
+      properties:
+        from_node_id:
+          type: string
+        to_node_id:
+          type: string
+        edge_type:
+          type: string
+          enum: [SEQUENTIAL, DATA_FLOW, CONDITIONAL]
+
+    PerceptionRequest:
+      type: object
+      required:
+        - object_name
+      properties:
+        object_name:
+          type: string
+          example: "red cup"
+        camera_frame_id:
+          type: string
+          example: "camera_depth_frame"
+        timeout_seconds:
+          type: number
+          format: float
+          default: 5.0
+
+    PerceptionResponse:
+      type: object
+      properties:
+        object_found:
+          type: boolean
+        coordinates:
+          type: object
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            z:
+              type: number
+        confidence:
+          type: number
+          format: float
+        timestamp:
+          type: string
+          format: date-time
+        bounding_box:
+          type: object
+          properties:
+            x_min:
+              type: integer
+            y_min:
+              type: integer
+            x_max:
+              type: integer
+            y_max:
+              type: integer
+
+    ExecutionRequest:
+      type: object
+      required:
+        - action_graph
+        - robot_id
+      properties:
+        action_graph:
+          $ref: '#/components/schemas/ActionGraph'
+        robot_id:
+          type: string
+          example: "humanoid_01"
+        timeout_seconds:
+          type: number
+          format: float
+          default: 30.0
+
+    ExecutionResponse:
+      type: object
+      properties:
+        execution_id:
+          type: string
+          example: "exec_12345"
+        status:
+          type: string
+          enum: [PENDING, EXECUTING, COMPLETED, FAILED, CANCELLED]
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionResult'
+        total_duration_seconds:
+          type: number
+          format: float
+
+    ActionResult:
+      type: object
+      properties:
+        action_id:
+          type: string
+        status:
+          type: string
+          enum: [SUCCESS, FAILED, CANCELLED]
+        duration_seconds:
+          type: number
+          format: float
+
+    VLARequest:
+      type: object
+      required:
+        - input_type
+      properties:
+        input_type:
+          type: string
+          enum: [voice, text]
+        audio_file:
+          type: string
+          format: binary
+        text_command:
+          type: string
+        robot_id:
+          type: string
+        execute:
+          type: boolean
+          default: true
+
+    VLAResponse:
+      type: object
+      properties:
+        pipeline_id:
+          type: string
+        transcribed_text:
+          type: string
+        action_graph:
+          $ref: '#/components/schemas/ActionGraph'
+        execution_status:
+          type: string
+        execution_results:
+          $ref: '#/components/schemas/ExecutionResponse'
+        total_duration_seconds:
+          type: number
+          format: float
+
+    ChatRequest:
+      type: object
+      required:
+        - session_id
+        - message
+      properties:
+        session_id:
+          type: string
+          example: "session_12345"
+        message:
+          type: string
+          example: "How does Whisper convert speech to text?"
+        chapter_context:
+          type: string
+          example: "chapter-4"
+        conversation_history:
+          type: array
+          items:
+            type: object
+
+    ChatResponse:
+      type: object
+      properties:
+        response:
+          type: string
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceCitation'
+        session_id:
+          type: string
+
+    SourceCitation:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+        section:
+          type: string
+        relevance_score:
+          type: number
+          format: float
+
+    PersonalizationRequest:
+      type: object
+      required:
+        - chapter_id
+        - user_profile
+      properties:
+        chapter_id:
+          type: string
+          example: "chapter-4"
+        user_profile:
+          $ref: '#/components/schemas/UserProfile'
+
+    UserProfile:
+      type: object
+      properties:
+        experience_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        learning_style:
+          type: string
+          enum: [visual, textual, hands-on]
+        preferred_language:
+          type: string
+          example: "en"
+
+    PersonalizationResponse:
+      type: object
+      properties:
+        personalized_content:
+          type: object
+          properties:
+            code_examples:
+              type: string
+              enum: [simplified, standard, advanced]
+            explanations:
+              type: string
+              enum: [detailed, concise]
+            terminology_level:
+              type: string
+              enum: [basic, intermediate, advanced]
+            adaptations_applied:
+              type: array
+              items:
+                type: string
+
+    TranslationRequest:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          type: string
+        context:
+          type: string
+          example: "robotics_textbook"
+        preserve_technical_terms:
+          type: boolean
+          default: true
+
+    TranslationResponse:
+      type: object
+      properties:
+        translated_text:
+          type: string
+        quality_score:
+          type: number
+          format: float
+        technical_terms_preserved:
+          type: array
+          items:
+            type: string
+        translation_metadata:
+          type: object
+          properties:
+            model:
+              type: string
+            validation:
+              type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        error_code:
+          type: string
+        details:
+          type: string
+          nullable: true
+

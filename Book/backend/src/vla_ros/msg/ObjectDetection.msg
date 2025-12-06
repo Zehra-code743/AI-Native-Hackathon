@@ -1,0 +1,7 @@
+std_msgs/Header header
+string object_name
+geometry_msgs/Point coordinates
+float64 confidence
+sensor_msgs/RegionOfInterest bounding_box
+string detection_model
+

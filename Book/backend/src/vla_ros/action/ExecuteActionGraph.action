@@ -1,0 +1,15 @@
+---
+# Goal
+ActionGraph action_graph
+string robot_id
+float64 timeout_seconds
+
+# Result
+ExecutionStatus execution_status
+
+# Feedback
+string current_action_id
+string status
+float64 progress_percentage  # 0.0 to 1.0
+string current_status_message
+

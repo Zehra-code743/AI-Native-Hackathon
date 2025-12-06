@@ -1,0 +1,10 @@
+---
+# Request
+ActionGraph action_graph
+string robot_id
+
+# Response
+bool is_valid
+string[] validation_errors
+string[] warnings
+

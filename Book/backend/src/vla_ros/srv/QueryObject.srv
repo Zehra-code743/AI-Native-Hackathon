@@ -1,0 +1,13 @@
+---
+# Request
+string object_name
+string camera_frame_id
+float64 timeout_seconds
+
+# Response
+bool object_found
+geometry_msgs/Point coordinates
+float64 confidence
+sensor_msgs/RegionOfInterest bounding_box
+string error_message
+
