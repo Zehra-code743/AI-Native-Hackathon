@@ -81,20 +81,23 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
-        {to: '/', label: 'Home', position: 'left'},
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Docs',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
-        {href: '/#tracks', label: 'Learning Tracks', position: 'left'},
-        {href: '/#why', label: 'Why this guide', position: 'left'},
         {
           href: 'https://github.com/HackathonAiRebortics/Book',
           label: 'GitHub',
           position: 'right',
+          className: 'navbar__item navbar__link',
+        },
+        {
+          to: '/signin',
+          label: 'Sign In',
+          position: 'right',
+          className: 'navbar__item navbar__link',
         },
       ],
     },
