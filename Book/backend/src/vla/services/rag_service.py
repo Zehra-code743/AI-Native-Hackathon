@@ -2,14 +2,24 @@
 
 import os
 from typing import List, Optional
+from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 import openai
 from openai import OpenAI
 
+# Load environment variables from .env file
+load_dotenv()
+
 # Initialize Qdrant client
-QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
+# Qdrant Cloud credentials from environment variables
+QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+
+if not QDRANT_URL:
+    raise ValueError("QDRANT_URL environment variable is required. Please set it in .env file.")
+if not QDRANT_API_KEY:
+    raise ValueError("QDRANT_API_KEY environment variable is required. Please set it in .env file.")
 
 qdrant_client = QdrantClient(
     url=QDRANT_URL,
