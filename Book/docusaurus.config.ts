@@ -15,10 +15,10 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://ai-native-hackathon-hbpn-git-001-00fd08-shan-e-zehras-projects.vercel.app',
+  url: 'https://ai-native-hackathon-hbpn-git-001-00fd08-shan-e-zehras-projects.vercel.app/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/', 
+  baseUrl: '/Book/', 
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
