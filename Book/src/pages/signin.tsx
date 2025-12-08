@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Link from '@docusaurus/Link';
 import styles from './signin.module.css';
 
 export default function SignIn(): JSX.Element {
@@ -112,6 +113,15 @@ export default function SignIn(): JSX.Element {
                 </svg>
                 Sign in with Google
               </button>
+
+              <div className={styles.signupLink}>
+                <p>
+                  Don't have an account?{' '}
+                  <Link to="/signup" className={styles.link}>
+                    Sign Up
+                  </Link>
+                </p>
+              </div>
             </>
           ) : (
             <form onSubmit={handleForgotPassword} className={styles.signinForm}>
