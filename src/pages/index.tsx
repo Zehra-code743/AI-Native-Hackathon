@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
+import SearchBar from '../components/SearchBar';
 import styles from './index.module.css';
 
 export default function Home(): ReactNode {
@@ -32,6 +33,11 @@ export default function Home(): ReactNode {
             onMouseEnter={e => (e.currentTarget.style.background = '#ff8c42')}
             onMouseLeave={e => (e.currentTarget.style.background = '#ff6a00')}
           >Start the Hackathon Book →</Link>
+          
+          {/* Search Bar */}
+          <div style={{ marginTop: '2rem' }}>
+            <SearchBar />
+          </div>
         </section>
 
         {/* Modules Section as cards */}

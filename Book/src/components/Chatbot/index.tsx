@@ -6,6 +6,19 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
   ? 'http://localhost:8000' 
   : 'http://localhost:8000';
 
+// Helper function to check if backend is available
+const checkBackendHealth = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(3000), // 3 second timeout
+    });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
 // Generate or retrieve session ID
 const getSessionId = (): string => {
   let sessionId = localStorage.getItem('chatbot_session_id');
@@ -27,6 +40,17 @@ export default function Chatbot(): JSX.Element {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [messagesLoaded, setMessagesLoaded] = useState(false);
+  const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
+
+  // Check backend availability on mount
+  useEffect(() => {
+    checkBackendHealth().then((available) => {
+      setBackendAvailable(available);
+      if (!available) {
+        console.error('Backend server is not available. Please make sure the backend server is running on port 8000.');
+      }
+    });
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -119,7 +143,7 @@ export default function Chatbot(): JSX.Element {
     setIsLoading(true);
 
     try {
-      // Call Gemini API endpoint
+      // Call RAG API endpoint (with vector database search)
       const response = await fetch(`${API_BASE_URL}/api/v1/chat/query`, {
         method: 'POST',
         headers: {
@@ -134,23 +158,39 @@ export default function Chatbot(): JSX.Element {
       if (response.ok) {
         const data = await response.json();
         const botMessage = {
-          text: data.bot_response,
+          text: data.bot_response || 'I received your message but got an empty response. Please try again.',
           sender: 'bot' as const,
         };
         setMessages((prev) => [...prev, botMessage]);
       } else {
-        // Error handling
+        // Get error details from response
+        let errorText = 'Sorry, I encountered an error. Please try again.';
+        try {
+          const errorData = await response.json();
+          errorText = errorData.detail || errorData.message || errorText;
+        } catch (parseError) {
+          errorText = `Error: ${response.status} ${response.statusText}`;
+        }
+        
         const errorMessage = {
-          text: 'Sorry, I encountered an error. Please try again.',
+          text: errorText,
           sender: 'bot' as const,
         };
         setMessages((prev) => [...prev, errorMessage]);
-        console.error('Error getting response from API');
+        console.error('Error getting response from API:', response.status, errorText);
       }
     } catch (error) {
       console.error('Error sending message:', error);
+      let errorText = 'Unable to connect to server. ';
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorText += 'Please make sure the backend server is running on http://localhost:8000. ';
+        errorText += 'You can start it by running: cd Book/backend && python start_server.py';
+      } else {
+        errorText += error instanceof Error ? error.message : 'Please try again.';
+      }
+      
       const errorMessage = {
-        text: 'Sorry, I encountered an error. Please try again.',
+        text: errorText,
         sender: 'bot' as const,
       };
       setMessages((prev) => [...prev, errorMessage]);

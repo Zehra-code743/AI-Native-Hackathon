@@ -4,12 +4,13 @@ import os
 import uuid
 from datetime import datetime
 from typing import List, Optional, Dict, Any
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue
+# Lazy imports to reduce memory usage at startup
+# from qdrant_client import QdrantClient
+# from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue
 from openai import OpenAI
 
 # Import rag_service for shared client and embedding functions
-from .rag_service import qdrant_client, generate_embeddings
+from .rag_service import get_qdrant_client, generate_embeddings
 
 # Collection name for chatbot messages
 CHAT_MESSAGES_COLLECTION = "chatbot_messages"
@@ -18,13 +19,18 @@ CHAT_MESSAGES_COLLECTION = "chatbot_messages"
 def initialize_chat_collection():
     """Initialize Qdrant collection for chatbot messages."""
     try:
+        from qdrant_client.models import Distance, VectorParams
+        client = get_qdrant_client()
+        if not client:
+            raise ValueError("Qdrant client not initialized. Check QDRANT_URL and QDRANT_API_KEY.")
+        
         # Check if collection exists
-        collections = qdrant_client.get_collections()
+        collections = client.get_collections()
         collection_names = [col.name for col in collections.collections]
         
         if CHAT_MESSAGES_COLLECTION not in collection_names:
             # Create collection with OpenAI text-embedding-3-small dimensions (1536)
-            qdrant_client.create_collection(
+            client.create_collection(
                 collection_name=CHAT_MESSAGES_COLLECTION,
                 vectors_config=VectorParams(
                     size=1536,  # OpenAI text-embedding-3-small dimension
@@ -34,6 +40,20 @@ def initialize_chat_collection():
             print(f"Created Qdrant collection: {CHAT_MESSAGES_COLLECTION}")
         else:
             print(f"Qdrant collection {CHAT_MESSAGES_COLLECTION} already exists")
+        
+        # Ensure index exists on session_id for filtering (required for queries)
+        try:
+            # Try to create index - will succeed if it doesn't exist, or raise error if it does
+            client.create_payload_index(
+                collection_name=CHAT_MESSAGES_COLLECTION,
+                field_name="session_id",
+                field_schema="keyword"
+            )
+            print(f"Created index on session_id for {CHAT_MESSAGES_COLLECTION}")
+        except Exception as index_error:
+            # Index might already exist, which is fine
+            if "already exists" not in str(index_error).lower():
+                print(f"Note: Could not create index on session_id (may already exist): {index_error}")
     except Exception as e:
         print(f"Error initializing chat collection: {e}")
         raise
@@ -68,6 +88,7 @@ def save_message(
         message_id = str(uuid.uuid4())
         
         # Create point with vector and payload
+        from qdrant_client.models import PointStruct
         point = PointStruct(
             id=message_id,
             vector=embedding,
@@ -81,7 +102,10 @@ def save_message(
         )
         
         # Upsert the point
-        qdrant_client.upsert(
+        client = get_qdrant_client()
+        if not client:
+            raise ValueError("Qdrant client not initialized. Check QDRANT_URL and QDRANT_API_KEY.")
+        client.upsert(
             collection_name=CHAT_MESSAGES_COLLECTION,
             points=[point]
         )
@@ -111,6 +135,12 @@ def get_session_messages(session_id: str, limit: int = 100) -> List[Dict[str, An
         List of message dictionaries sorted by timestamp
     """
     try:
+        from qdrant_client.models import Filter, FieldCondition, MatchValue
+        client = get_qdrant_client()
+        if not client:
+            print("Qdrant client not initialized. Cannot retrieve messages.")
+            return []
+        
         # Query points with session_id filter
         filter_condition = Filter(
             must=[
@@ -122,7 +152,7 @@ def get_session_messages(session_id: str, limit: int = 100) -> List[Dict[str, An
         )
         
         # Scroll through points matching the filter
-        points, _ = qdrant_client.scroll(
+        points, _ = client.scroll(
             collection_name=CHAT_MESSAGES_COLLECTION,
             scroll_filter=filter_condition,
             limit=limit,
@@ -185,7 +215,12 @@ def search_similar_messages(
             )
         
         # Search for similar points
-        search_results = qdrant_client.search(
+        client = get_qdrant_client()
+        if not client:
+            print("Qdrant client not initialized. Cannot search messages.")
+            return []
+        
+        search_results = client.search(
             collection_name=CHAT_MESSAGES_COLLECTION,
             query_vector=query_embedding,
             query_filter=query_filter,

@@ -6,6 +6,7 @@ from typing import List, Optional
 
 from ...services.chat_service import save_message, get_session_messages, search_similar_messages
 from ...services.gemini_service import get_chatbot_response
+from ...services.rag_service import get_rag_response
 
 router = APIRouter()
 
@@ -125,37 +126,65 @@ async def get_messages(session_id: str, limit: int = 100):
 @router.post("/query", response_model=ChatQueryResponse)
 async def chat_query(request: ChatQueryRequest):
     """
-    Process a chat query using Gemini LLM and save to Qdrant.
+    Process a chat query using RAG with vector database search and save to Qdrant.
+    Always searches the vector database before generating a response.
     
     Args:
         request: Chat query with session_id, message, and optional chapter_context
         
     Returns:
-        Bot response from Gemini
+        Bot response from RAG service (with vector database search)
     """
     try:
-        # Get response from Gemini
-        bot_response = get_chatbot_response(
+        print(f"[Chat Query] Received query from session {request.session_id}: {request.message[:50]}...")
+        
+        # Get conversation history for context
+        previous_messages = get_session_messages(request.session_id, limit=10)
+        print(f"[Chat Query] Loaded {len(previous_messages)} previous messages")
+        
+        # Build conversation history format for RAG service
+        conversation_history = []
+        for msg in previous_messages[-6:]:  # Last 6 messages (3 exchanges)
+            role = "user" if msg["message_type"] == "user" else "assistant"
+            conversation_history.append({
+                "role": role,
+                "content": msg["content"]
+            })
+        
+        # Get response from RAG service (always searches vector database first)
+        print(f"[Chat Query] Calling RAG service to search vector database and generate response...")
+        bot_response = get_rag_response(
             user_message=request.message,
-            session_id=request.session_id,
-            chapter_context=request.chapter_context
+            conversation_history=conversation_history if conversation_history else None
         )
+        
+        if not bot_response or not bot_response.strip():
+            bot_response = "I apologize, but I couldn't generate a response. Please try again."
+            print(f"[Chat Query] WARNING: Empty response from RAG service")
+        
+        print(f"[Chat Query] Generated response: {bot_response[:100]}...")
         
         # Save user message to Qdrant
-        save_message(
-            session_id=request.session_id,
-            message_type="user",
-            content=request.message,
-            chapter_context=request.chapter_context
-        )
+        try:
+            save_message(
+                session_id=request.session_id,
+                message_type="user",
+                content=request.message,
+                chapter_context=request.chapter_context
+            )
+        except Exception as save_error:
+            print(f"[Chat Query] Warning: Failed to save user message: {save_error}")
         
         # Save bot response to Qdrant
-        save_message(
-            session_id=request.session_id,
-            message_type="bot",
-            content=bot_response,
-            chapter_context=request.chapter_context
-        )
+        try:
+            save_message(
+                session_id=request.session_id,
+                message_type="bot",
+                content=bot_response,
+                chapter_context=request.chapter_context
+            )
+        except Exception as save_error:
+            print(f"[Chat Query] Warning: Failed to save bot response: {save_error}")
         
         return ChatQueryResponse(
             session_id=request.session_id,
@@ -163,7 +192,14 @@ async def chat_query(request: ChatQueryRequest):
             bot_response=bot_response,
             chapter_context=request.chapter_context
         )
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"[Chat Query] Error processing chat query: {e}")
+        print(f"[Chat Query] Traceback: {error_trace}")
         raise HTTPException(
             status_code=500,
             detail=f"Error processing chat query: {str(e)}"
