@@ -2,29 +2,59 @@ import React, { useState } from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Link from '@docusaurus/Link';
+import { useAuthContext } from '../auth/context/AuthProvider';
+import { useHistory } from '@docusaurus/router';
 import styles from './signin.module.css';
 
 export default function SignIn(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  const [username, setUsername] = useState('');
+  const { signIn, isAuthenticated } = useAuthContext();
+  const history = useHistory();
+
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      history.push('/');
+    }
+  }, [isAuthenticated, history]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign in logic here
-    console.log('Sign in:', { username, password });
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const result = await signIn(email, password);
+
+      if (result.error) {
+        setError(result.error.message || 'Sign in failed. Please check your credentials.');
+      } else {
+        // Redirect to home page on success
+        history.push('/');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Sign in error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignIn = () => {
-    // Handle Google sign in logic here
-    console.log('Google sign in');
+    // Google sign in not yet implemented
+    setError('Google sign-in coming soon!');
   };
 
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle forgot password logic here
-    console.log('Forgot password');
+    // Forgot password not yet implemented
+    setError('Password reset coming soon! Please contact support.');
     setShowForgotPassword(false);
   };
 
@@ -39,18 +69,32 @@ export default function SignIn(): JSX.Element {
             <p>Sign in to continue to AI Robotics</p>
           </div>
 
+          {error && (
+            <div style={{
+              padding: '12px',
+              marginBottom: '16px',
+              backgroundColor: '#fee',
+              border: '1px solid #fcc',
+              borderRadius: '4px',
+              color: '#c33'
+            }}>
+              {error}
+            </div>
+          )}
+
           {!showForgotPassword ? (
             <>
               <form onSubmit={handleSubmit} className={styles.signinForm}>
                 <div className={styles.formGroup}>
-                  <label htmlFor="username">Username</label>
+                  <label htmlFor="email">Email</label>
                   <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Enter your username"
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
                     required
+                    disabled={isLoading}
                     className={styles.input}
                   />
                 </div>
@@ -64,6 +108,7 @@ export default function SignIn(): JSX.Element {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
+                    disabled={isLoading}
                     className={styles.input}
                   />
                 </div>
@@ -72,13 +117,17 @@ export default function SignIn(): JSX.Element {
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className={styles.forgotPasswordLink}>
+                    className={styles.forgotPasswordLink}
+                    disabled={isLoading}>
                     Forgot Password?
                   </button>
                 </div>
 
-                <button type="submit" className={styles.signinButton}>
-                  Sign In
+                <button
+                  type="submit"
+                  className={styles.signinButton}
+                  disabled={isLoading}>
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
               </form>
 

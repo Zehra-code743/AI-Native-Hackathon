@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "concurrently --names \"FRONTEND,BACKEND\" --prefix-colors \"blue,green\" \"npm run start:frontend\" \"npm run start:backend\"",
+    "start": "concurrently --names \"FRONTEND,AUTH,BACKEND\" --prefix-colors \"blue,magenta,green\" \"npm run start:frontend\" \"npm run start:auth\" \"npm run start:backend\"",
     "start:frontend": "node --max-old-space-size=6144 node_modules/@docusaurus/core/bin/docusaurus.mjs start",
+    "start:auth": "cd auth-server && node server.js",
     "start:backend": "cd backend && python start_server.py",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
@@ -20,7 +21,10 @@
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
+    "better-auth": "^1.4.7",
+    "better-sqlite3": "^12.5.0",
     "clsx": "^2.0.0",
+    "drizzle-orm": "^0.41.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -29,8 +33,8 @@
     "@docusaurus/module-type-aliases": "3.9.2",
     "@docusaurus/tsconfig": "3.9.2",
     "@docusaurus/types": "3.9.2",
-    "typescript": "~5.6.2",
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "typescript": "~5.6.2"
   },
   "browserslist": {
     "production": [

@@ -93,12 +93,6 @@ const config: Config = {
           position: 'right',
           className: 'navbar__item navbar__link',
         },
-        {
-          to: '/signin',
-          label: 'Sign In',
-          position: 'right',
-          className: 'navbar__item navbar__link',
-        },
       ],
     },
     footer: {

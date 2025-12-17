@@ -13,7 +13,8 @@ app.use(
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
-      "https://ai-native-hackathon-hbpn-git-001-00fd08-shan-e-zehras-projects.vercel.app"
+      "https://ai-native-hackathon-hbpn-git-001-00fd08-shan-e-zehras-projects.vercel.app",
+      // Add your production domains here
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
@@ -30,13 +31,18 @@ app.use(express.json());
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", service: "Auth Server", timestamp: new Date().toISOString() });
+  res.json({
+    status: "ok",
+    service: "Auth Server",
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Root endpoint
 app.get("/", (req, res) => {
   res.json({
-    message: "Better-Auth Server for AI Robotics Book",
+    message: "AI Robotics Book - Authentication Server",
+    status: "running",
     endpoints: {
       health: "/health",
       auth: "/api/auth/*"
@@ -45,7 +51,7 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, HOST, () => {
-  console.log(`✅ Auth server running on http://${HOST}:${PORT}`);
-  console.log(`📍 Health check: http://${HOST}:${PORT}/health`);
-  console.log(`🔐 Auth endpoints: http://${HOST}:${PORT}/api/auth/*`);
+  console.log(`🔐 Auth server running on http://${HOST}:${PORT}`);
+  console.log(`📍 Auth endpoints available at http://${HOST}:${PORT}/api/auth/*`);
+  console.log(`❤️  Health check at http://${HOST}:${PORT}/health`);
 });

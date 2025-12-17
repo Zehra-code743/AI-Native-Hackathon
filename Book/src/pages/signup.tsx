@@ -2,29 +2,67 @@ import React, { useState } from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Link from '@docusaurus/Link';
+import { useAuthContext } from '../auth/context/AuthProvider';
+import { useHistory } from '@docusaurus/router';
 import styles from './signup.module.css';
 
 export default function SignUp(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
-  const [username, setUsername] = useState('');
+  const { signUp, isAuthenticated } = useAuthContext();
+  const history = useHistory();
+
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      history.push('/');
+    }
+  }, [isAuthenticated, history]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
     // Validate passwords match
     if (password !== confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match!');
       return;
     }
-    // Handle sign up logic here
-    console.log('Sign up:', { username, email, password });
+
+    // Validate password length
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await signUp(email, password, name);
+
+      if (result.error) {
+        setError(result.error.message || 'Sign up failed. Please try again.');
+      } else {
+        // Redirect to home page on success
+        history.push('/');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Sign up error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignUp = () => {
-    // Handle Google sign up logic here
-    console.log('Google sign up');
+    // Google sign up not yet implemented
+    setError('Google sign-up coming soon!');
   };
 
   return (
@@ -38,16 +76,30 @@ export default function SignUp(): JSX.Element {
             <p>Sign up to get started with AI Robotics</p>
           </div>
 
+          {error && (
+            <div style={{
+              padding: '12px',
+              marginBottom: '16px',
+              backgroundColor: '#fee',
+              border: '1px solid #fcc',
+              borderRadius: '4px',
+              color: '#c33'
+            }}>
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className={styles.signupForm}>
             <div className={styles.formGroup}>
-              <label htmlFor="username">Username</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your full name"
                 required
+                disabled={isLoading}
                 className={styles.input}
               />
             </div>
@@ -61,12 +113,13 @@ export default function SignUp(): JSX.Element {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
+                disabled={isLoading}
                 className={styles.input}
               />
             </div>
 
             <div className={styles.formGroup}>
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Password (min 8 characters)</label>
               <input
                 type="password"
                 id="password"
@@ -74,6 +127,8 @@ export default function SignUp(): JSX.Element {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                minLength={8}
+                disabled={isLoading}
                 className={styles.input}
               />
             </div>
@@ -87,12 +142,17 @@ export default function SignUp(): JSX.Element {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 required
+                minLength={8}
+                disabled={isLoading}
                 className={styles.input}
               />
             </div>
 
-            <button type="submit" className={styles.signupButton}>
-              Sign Up
+            <button
+              type="submit"
+              className={styles.signupButton}
+              disabled={isLoading}>
+              {isLoading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
 

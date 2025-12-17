@@ -1,0 +1,56 @@
+.authNavbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.userInfo {
+  font-size: 0.9rem;
+  color: var(--ifm-color-content);
+}
+
+.signOutButton {
+  padding: 0.4rem 1rem;
+  background-color: var(--ifm-color-danger);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.signOutButton:hover {
+  background-color: var(--ifm-color-danger-dark);
+}
+
+.signInLink,
+.signUpLink {
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.signInLink {
+  color: var(--ifm-color-primary);
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.signInLink:hover {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+.signUpLink {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.signUpLink:hover {
+  background-color: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+}
